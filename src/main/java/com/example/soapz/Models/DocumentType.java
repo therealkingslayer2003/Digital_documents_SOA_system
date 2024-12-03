@@ -11,7 +11,7 @@ import lombok.*;
 public class DocumentType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "type_name", nullable = false, length = 100, unique = true)
     private String typeName;

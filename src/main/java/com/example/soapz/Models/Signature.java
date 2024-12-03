@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class Signature {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "created_date", nullable = false)
     private LocalDateTime createdDate;

@@ -1,4 +1,5 @@
 package com.example.soapz.Models.ServiceRegistry;
+import com.example.soapz.Repositories.ServiceCategoryRepository;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
@@ -27,4 +28,8 @@ public class Service {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ServiceStatus status;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private ServiceCategory serviceCategory;
 }
