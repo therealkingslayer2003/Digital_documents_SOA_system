@@ -43,7 +43,8 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(new OrRequestMatcher(
-                                new AntPathRequestMatcher("/auth/register")
+                                new AntPathRequestMatcher("/auth/register"),
+                                new AntPathRequestMatcher("/auth/login")
                         )).permitAll()
                         .anyRequest().authenticated()
                 )
