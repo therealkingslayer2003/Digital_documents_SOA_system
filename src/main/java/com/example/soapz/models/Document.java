@@ -25,7 +25,7 @@ public class Document {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "status_id", nullable = false)
+    @JoinColumn(name = "status_id")
     private DocumentStatus status;
 
     @ManyToOne
@@ -35,4 +35,20 @@ public class Document {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private SystemUser user;
+
+    @PrePersist
+    public void prePersist() {      //values by default
+        if (this.status == null) {
+            this.status = new DocumentStatus();
+            this.status.setId(1);
+        }
+        if (this.lastUpdated == null) {
+            this.lastUpdated = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.lastUpdated = LocalDateTime.now();
+    }
 }
