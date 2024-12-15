@@ -7,6 +7,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
