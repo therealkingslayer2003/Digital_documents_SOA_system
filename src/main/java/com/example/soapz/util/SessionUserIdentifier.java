@@ -11,8 +11,8 @@ public class SessionUserIdentifier {
     public String getCurrentUserEmail() {
         if (currentUserEmail == null) {
             Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            if (principal instanceof UserDetails) {
-                currentUserEmail = ((UserDetails) principal).getUsername();
+            if (principal instanceof UserDetails details) {
+                currentUserEmail = details.getUsername();
             } else {
                 throw new IllegalStateException("Current user is not authenticated");
             }

@@ -1,10 +1,11 @@
 package com.example.soapz.services;
 
 import com.example.soapz.models.serviceRegistry.Service;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import static com.example.soapz.models.serviceRegistry.ServiceStatus.ACTIVE;
 
 @org.springframework.stereotype.Service
 public class ServiceLocator {
@@ -24,7 +25,7 @@ public class ServiceLocator {
 
         if(response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
             Service service = response.getBody();
-            if("ACTIVE".equalsIgnoreCase(String.valueOf(service.getStatus()))) {
+            if(ACTIVE == service.getStatus()) {
                 return service.getUrl();
             }
         }

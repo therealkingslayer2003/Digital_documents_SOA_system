@@ -30,8 +30,8 @@ public class AuthController{
     public String authenticate(@Valid @RequestBody SystemUserLoginDTO systemUserLoginDTO){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    systemUserLoginDTO.getEmail(),
-                    systemUserLoginDTO.getPassword()
+                    systemUserLoginDTO.email(),
+                    systemUserLoginDTO.password()
                 )
         );
 
