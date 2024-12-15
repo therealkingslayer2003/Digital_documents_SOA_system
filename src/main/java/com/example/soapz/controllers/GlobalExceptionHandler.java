@@ -1,5 +1,6 @@
 package com.example.soapz.controllers;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,9 +15,9 @@ import java.util.Objects;
 @ControllerAdvice
 class GlobalExceptionHandler {
 
-    @ExceptionHandler({SQLException.class, IllegalArgumentException.class})
+    @ExceptionHandler({SQLException.class, IllegalArgumentException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ErrorResponse handleIllegalArgumentException(SQLException ex) {
+    ErrorResponse handleException(Exception ex) {
         return ErrorResponse.builder()
                 .message(ex.getMessage())
                 .status(HttpStatus.BAD_REQUEST)
@@ -25,7 +26,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler({AccessDeniedException.class, AuthenticationException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    ErrorResponse handleAccessDeniedException(AccessDeniedException ex) {
+    ErrorResponse handleAccessDeniedException(Exception ex) {
         return ErrorResponse.builder()
                 .message(ex.getMessage())
                 .status(HttpStatus.UNAUTHORIZED)
