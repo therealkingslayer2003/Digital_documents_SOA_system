@@ -3,75 +3,75 @@ package com.example.soapz.services;
 import com.example.soapz.DTOs.DocumentCreateDTO;
 import com.example.soapz.DTOs.DocumentUpdateDTO;
 import com.example.soapz.models.Document;
-import com.example.soapz.models.DocumentStatus;
 import com.example.soapz.models.SystemUser;
 import com.example.soapz.repositories.DocumentRepository;
 import com.example.soapz.repositories.DocumentTypeRepository;
 import com.example.soapz.repositories.SystemUserRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CivilianDocumentService {
     private final DocumentRepository documentRepository;
     private final SystemUserRepository systemUserRepository;
     private final DocumentTypeRepository documentTypeRepository;
 
-    public List<Document> getAllDocuments(String userEmail) throws ChangeSetPersister.NotFoundException {
+    public List<Document> getAllDocuments(String userEmail) {
         SystemUser user = systemUserRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new ChangeSetPersister.NotFoundException());
+                .orElseThrow(IllegalArgumentException::new);
 
         return documentRepository.findAllByUser(user);
     }
 
-    public Document getDocumentById(Integer id, String userEmail) throws ChangeSetPersister.NotFoundException, AccessDeniedException {
+    public Document getDocumentById(Integer id, String userEmail) {
         checkIfCivilianAuthorizedForAction(id, userEmail);
 
-       return documentRepository.findById(id).orElseThrow(() -> new ChangeSetPersister.NotFoundException());
+        return documentRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 
-    public void deleteDocumentById(Integer id, String userEmail) throws ChangeSetPersister.NotFoundException, AccessDeniedException {
+    public void deleteDocumentById(Integer id, String userEmail) {
         checkIfCivilianAuthorizedForAction(id, userEmail);
 
         documentRepository.deleteById(id);
     }
 
-    public Document createNewDocument(DocumentCreateDTO documentCreateDTO, String userEmail) throws ChangeSetPersister.NotFoundException {
+    public Document createNewDocument(DocumentCreateDTO documentCreateDTO, String userEmail) {
         Document document = new Document();
 
-        document.setTitle(documentCreateDTO.getTitle());
-        document.setContent(documentCreateDTO.getContent());
+        document.setTitle(documentCreateDTO.title());
+        document.setContent(documentCreateDTO.content());
 
-        document.setType(documentTypeRepository.findById(Integer.valueOf(documentCreateDTO.getTypeId()))
-                .orElseThrow(() -> new ChangeSetPersister.NotFoundException()));
+        document.setType(documentTypeRepository.findById(Integer.valueOf(documentCreateDTO.typeId()))
+                .orElseThrow(IllegalArgumentException::new));
 
         document.setUser(systemUserRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new ChangeSetPersister.NotFoundException()));
+                .orElseThrow(IllegalArgumentException::new));
 
         return documentRepository.save(document);
     }
 
-    public Document updateDocument(Integer id, DocumentUpdateDTO documentUpdateDTO) throws ChangeSetPersister.NotFoundException {
-        Document document = documentRepository.findById(id)
-                .orElseThrow(() -> new ChangeSetPersister.NotFoundException());
+    public Document updateDocument(DocumentUpdateDTO documentUpdateDTO) {
+        Document document = documentRepository.findById(documentUpdateDTO.id())
+                .orElseThrow(IllegalArgumentException::new);
 
-        document.setContent(documentUpdateDTO.getContent());
+        document.setContent(documentUpdateDTO.content());
 
         return documentRepository.save(document);
     }
 
-    private void checkIfCivilianAuthorizedForAction(Integer id, String userEmail) throws ChangeSetPersister.NotFoundException, AccessDeniedException {
+    private void checkIfCivilianAuthorizedForAction(Integer id, String userEmail) {
         SystemUser user = systemUserRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new ChangeSetPersister.NotFoundException());
+                .orElseThrow(IllegalArgumentException::new);
 
         List<Document> documents = documentRepository.findAllByUser(user);
+        Document retrievedDocument = documentRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
 
-        if(!documents.contains(documentRepository.findById(id).orElse(null))){
+        if (!documents.contains(retrievedDocument)) {
             throw new AccessDeniedException("You do not have permission to do this action.");
         }
     }

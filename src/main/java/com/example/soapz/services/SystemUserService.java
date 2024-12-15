@@ -19,19 +19,19 @@ public class SystemUserService {
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public void registerUser(SystemUserCreateDTO systemUserCreateDTO) throws ChangeSetPersister.NotFoundException {
+    public void registerUser(SystemUserCreateDTO systemUserCreateDTO) {
         SystemUser systemUser = new SystemUser();
 
-        systemUser.setName(systemUserCreateDTO.getName());
-        systemUser.setEmail(systemUserCreateDTO.getEmail());
+        systemUser.setName(systemUserCreateDTO.name());
+        systemUser.setEmail(systemUserCreateDTO.email());
 
         //Password encryption
-        String encodedPassword = bCryptPasswordEncoder.encode(systemUserCreateDTO.getPassword());
+        String encodedPassword = bCryptPasswordEncoder.encode(systemUserCreateDTO.password());
         systemUser.setPassword(encodedPassword);
 
-        systemUser.setSurname(systemUserCreateDTO.getSurname());
+        systemUser.setSurname(systemUserCreateDTO.surname());
 
-        systemUser.setRole(roleRepository.findById(systemUserCreateDTO.getRoleId())
+        systemUser.setRole(roleRepository.findById(systemUserCreateDTO.roleId())
                 .orElseThrow(() -> new IllegalArgumentException("Role not found")));
 
         systemUserRepository.save(systemUser);

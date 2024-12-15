@@ -6,9 +6,9 @@ import com.example.soapz.models.Document;
 import com.example.soapz.services.CivilianDocumentService;
 import com.example.soapz.util.SessionUserIdentifier;
 import lombok.AllArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,38 +21,37 @@ public class CivilianDocumentController {
     private final CivilianDocumentService civilianDocumentService;
     private final SessionUserIdentifier sessionUserIdentifier;
 
-    @GetMapping("/get-all")
-    public List<Document> getAllDocuments() throws ChangeSetPersister.NotFoundException {
+    @GetMapping("/all")
+    public List<Document> getAllDocuments() {
         String userEmail = sessionUserIdentifier.getCurrentUserEmail();
 
         return civilianDocumentService.getAllDocuments(userEmail);
     }
 
-    @GetMapping("/get/{id}")
-    public Document getDocumentById(@PathVariable String id) throws ChangeSetPersister.NotFoundException {
+    @GetMapping
+    public Document getDocumentById(@RequestParam Integer id) {
         String userEmail = sessionUserIdentifier.getCurrentUserEmail();
 
-        return civilianDocumentService.getDocumentById(Integer.valueOf(id), userEmail);
+        return civilianDocumentService.getDocumentById(id, userEmail);
     }
 
-    @DeleteMapping("/delete/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteDocumentById(@PathVariable String id) throws ChangeSetPersister.NotFoundException {
+    @DeleteMapping
+    public void deleteDocumentById(@RequestParam Integer id) {
         String userEmail = sessionUserIdentifier.getCurrentUserEmail();
 
-        civilianDocumentService.deleteDocumentById(Integer.valueOf(id), userEmail);
+        civilianDocumentService.deleteDocumentById(id, userEmail);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Document createNewDocument(@RequestBody DocumentCreateDTO documentCreateDTO) throws ChangeSetPersister.NotFoundException {
+    public Document createNewDocument(@RequestBody @Validated DocumentCreateDTO documentCreateDTO) {
         String userEmail = sessionUserIdentifier.getCurrentUserEmail();
 
         return civilianDocumentService.createNewDocument(documentCreateDTO, userEmail);
     }
 
-    @PutMapping("/update/{id}")
-    public Document updateDocument(@PathVariable String id, @RequestBody DocumentUpdateDTO documentUpdateDTO) throws ChangeSetPersister.NotFoundException {
-        return civilianDocumentService.updateDocument(Integer.valueOf(id), documentUpdateDTO);
+    @PutMapping
+    public Document updateDocument(@RequestBody @Validated DocumentUpdateDTO documentUpdateDTO) {
+        return civilianDocumentService.updateDocument(documentUpdateDTO);
     }
 }
